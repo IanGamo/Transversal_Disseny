@@ -11,7 +11,7 @@ body::before {
     color: white;
     padding: 5px 15px;
     border-radius: 20px;
-    font-size: 11px;
+    font-size: 0.7rem;
     font-weight: bold;
     text-transform: uppercase;
     z-index: 1000;
@@ -23,7 +23,7 @@ body::before {
    1. BASE MÓVIL (Mobile-First)
    ========================================== */
 * {
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
 body {
@@ -32,67 +32,75 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height: 100vh; /* Cambiado a 100vh para centrar bien */
     margin: 0;
     width: 100%; 
-   
+    overflow-x: hidden; 
 }
 
 .register-container {
     background: #fff;
-    padding: 25px 20px; 
-    border-radius: 8px;
+    padding: 2rem 1.5rem; /* Usando rem para mejor consistencia */
+    border-radius: 12px;
     width: 90%; 
     max-width: 450px;
-    margin: 20px auto;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    margin: 2rem auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
 
 h2 {
     text-align: center;
-    margin-bottom: 25px;
-    color: #333;
+    margin-bottom: 1.5rem;
+    color: #1a1a1a;
     font-weight: 700;
-   
+    font-size: 1.5rem; /* Ahora se ve bien en móvil (aprox 24px) */
 }
 
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 1.2rem;
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
 label {
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-weight: bold;
-    color: #555;
-   
+    color: #444;
+    font-size: 0.9rem; /* Tamaño legible (aprox 14px) */
 }
 
 input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="tel"] {
-    width: 100% !important; 
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    width: 100% !important;
+    padding: 12px 15px;
+    border: 2px solid #eee; /* Borde más moderno */
+    border-radius: 6px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 16px; 
+    font-size: 1rem; /* 16px para evitar el zoom molesto en iOS */
+    transition: border-color 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #ff3131;
 }
 
 button {
-    margin-top: 10px;
+    margin-top: 1rem;
     width: 100%;
-    padding: 14px;
+    padding: 1rem;
     background: #ff3131;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     transition: all 0.3s ease;
 }
 
@@ -106,9 +114,9 @@ button {
     }
 
     .register-container {
-        border-top: 8px solid #ff3131;
-        border-radius: 0 0 8px 8px;
-        padding: 40px;
+        border-top: 10px solid #ff3131;
+        border-radius: 0 0 12px 12px;
+        padding: 3rem;
         width: 70%;
     }
 }
@@ -128,23 +136,24 @@ button {
     }
 
     .register-container {
-        width: 700px;
+        width: 750px; /* Un poco más ancho para el layout horizontal */
         border-top: none;
-        border-left: 12px solid #ff3131;
-        border-radius: 8px;
-        box-shadow: 0 0 30px rgba(255, 49, 49, 0.2);
+        border-left: 15px solid #ff3131;
+        border-radius: 12px;
+        box-shadow: 0 0 40px rgba(255, 49, 49, 0.25);
     }
 
     .input-group {
         flex-direction: row;
         align-items: center;
-        margin-bottom: 20px;
+        margin-bottom: 1.5rem;
     }
 
     label {
         flex: 0 0 30%;
         text-align: right;
         padding-right: 25px;
+        margin-bottom: 0;
     }
 
     input[type="text"],
@@ -158,10 +167,18 @@ button {
         text-align: left;
         margin-left: 30%;
         font-size: 2.2rem;
+        margin-bottom: 2rem;
     }
 
     button {
         width: 70%;
         margin-left: 30%;
+        padding: 1.2rem;
+    }
+
+    button:hover {
+        background: #000;
+        color: #ff3131;
+        box-shadow: 0 5px 15px rgba(255, 49, 49, 0.4);
     }
 }

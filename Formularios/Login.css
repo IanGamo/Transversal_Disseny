@@ -27,7 +27,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height: 700px;
     margin: 0;
 }
 
@@ -141,7 +141,7 @@ button {
     }
 
     h2 {
-        font-size: 2.2rem;
+        font-size: 35px;
         margin-left: 30%;
         text-align: left;
         color: #000;
