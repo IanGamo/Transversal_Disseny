@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "adm1";
 $pass = "12345";
-$db   = "Race_&_Meet";
+$db   = "Race_and_Meet";
 
 // MySQLi Object-oriented (Requerimiento 4.2)
 $connection = new mysqli($host, $user, $pass, $db);
