@@ -29,3 +29,5 @@ class UserController {
         echo "Usuario registrado.";
     }
 }
+
+//prueba
