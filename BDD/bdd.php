@@ -9,8 +9,8 @@ $connection = new mysqli($host, $user, $pass, $db);
 
 // Verificar conexión
 if ($connection->connect_error) {
-    die("Error de conexión: " + $connection->connect_error);
+    die("Error de conexión: " . $connection->connect_error);
 }
-echo "Connection ennabled"
+echo "Connection ennabled";
 
 ?>
