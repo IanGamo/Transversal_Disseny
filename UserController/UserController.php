@@ -3,7 +3,7 @@ session_start();
 //Validar forms
 if ($_SERVER["REQUEST_METHOD"=="POST"]){
     $user = new UserController();
-
+    
     if (isset($_POST["Login"])){
             echo "<p> Login button is clicked.</p>";
             $user->login();

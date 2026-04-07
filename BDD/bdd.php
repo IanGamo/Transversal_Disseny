@@ -4,7 +4,7 @@ $user = "adm1";
 $pass = "12345";
 $db   = "Race_and_Meet";
 
-// MySQLi Object-oriented (Requerimiento 4.2)
+// MySQLi Object-oriented (4.2)
 $connection = new mysqli($host, $user, $pass, $db);
 
 // Verificar conexión
