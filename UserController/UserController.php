@@ -29,9 +29,8 @@ class UserController {
         // Conexión directa base de datos
         $this->connection = new mysqli(
             "localhost",      // Servidor
-            "root",           // Usuario
-            "",               // Contraseña
-            "base_de_datos" // Nombre de la BBDD
+            "adm1",           // Usuario
+            "Race_and_Meet" // Nombre de la BBDD
         );
 
         if ($this->connection->connect_error) {
