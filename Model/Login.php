@@ -2,9 +2,9 @@
 session_start();
  
 $host     = 'localhost';
-$dbname   = 'tu_base_de_datos';
-$username = 'tu_usuario';
-$password = 'tu_contraseña';
+$dbname   = 'Race_and_Meet';
+$username = 'adm1';
+$password = '12345';
  
 function getUserFromDB(string $email, string $password): ?array
 {

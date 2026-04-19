@@ -2,9 +2,9 @@
 session_start();
  
 $host     = 'localhost';
-$dbname   = 'tu_base_de_datos';
-$db_user  = 'tu_usuario';
-$db_pass  = 'tu_contraseña';
+$dbname   = 'race_and_meet';
+$db_user  = 'adm1';
+$db_pass  = '12345';
  
 function insertUser(string $name, string $password, string $email, string $path): bool
 {
@@ -22,7 +22,7 @@ function insertUser(string $name, string $password, string $email, string $path)
     }
  
     $stmt = $pdo->prepare(
-        'INSERT INTO users (name, password, email, path) VALUES (?, ?, ?, ?)'
+        'INSERT INTO usuarios (name, password, email, path) VALUES (?, ?, ?, ?)'
     );
  
     return $stmt->execute([$name, password_hash($password, PASSWORD_DEFAULT), $email, $path]);

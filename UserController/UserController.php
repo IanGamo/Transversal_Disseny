@@ -8,12 +8,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<p> Login button is clicked.</p>";
         $user->login();
         $result = $user->login();
-        // if ($result === true) {
-        //     header("Location: profile.php");
-        //     exit;
-        // } else {
-        //     $error = $result; // Muestra el mensaje de error en el HTML
-        // }
+         if ($result === true) {
+             header("Location: profile.php");
+             exit;
+         } else {
+             $error = $result; // Muestra el mensaje de error en el HTML
+         }
     }
     if (isset($_POST["Logout"])) {
         echo "<p> Logout button is clicked.</p>";
@@ -35,7 +35,7 @@ class UserController
             "localhost",
             "adm1",
             "12345",
-            "Race_and_Meet"
+            "race_and_meet"
         );
 
         if ($this->connection->connect_error) {
@@ -48,32 +48,32 @@ class UserController
     {
         echo "en login";
 
-        // $email    = trim($_POST["email"]    ?? "");
-        // $password = trim($_POST["password"] ?? "");
+         $email    = trim($_POST["email"]    ?? "");
+         $password = trim($_POST["password"] ?? "");
 
-        // if (empty($email) || empty($password)) {
-        //     return "Debes rellenar todos los campos.";
-        // }
+         if (empty($email) || empty($password)) {
+             return "Debes rellenar todos los campos.";
+         }
 
-        // $stmt = $this->connection->prepare(
-        //     "SELECT id, email, password FROM usuarios WHERE email = ?"
-        // );
-        // $stmt->bind_param("s", $email);
-        // $stmt->execute();
-        // $resultado = $stmt->get_result();
+         $stmt = $this->connection->prepare(
+             "SELECT id, email, password FROM usuarios WHERE email = ?"
+         );
+         $stmt->bind_param("s", $email);
+         $stmt->execute();
+         $resultado = $stmt->get_result();
 
-        // if ($resultado->num_rows === 0) {
-        //     return "El usuario no existe.";
-        // }
+         if ($resultado->num_rows === 0) {
+             return "El usuario no existe.";
+         }
 
-        // $usuario = $resultado->fetch_assoc();
+         $usuario = $resultado->fetch_assoc();
 
-        // if (!password_verify($password, $usuario["password"])) {
-        //     return "Contraseña incorrecta.";
-        // }
+         if (!password_verify($password, $usuario["password"])) {
+             return "Contraseña incorrecta.";
+         }
 
-        // $_SESSION["usuario_id"]    = $usuario["id"];
-        // $_SESSION["usuario_email"] = $usuario["email"];
+         $_SESSION["usuario_id"]    = $usuario["id"];
+         $_SESSION["usuario_email"] = $usuario["email"];
 
         return true;
     }
@@ -92,6 +92,7 @@ class UserController
         $name     = trim($_POST["name"]     ?? "");
         $email    = trim($_POST["email"]    ?? "");
         $password = trim($_POST["password"] ?? "");
+        $rol      = trim($_POST["rol"]      ?? "usuario");
 
         if (empty($name) || empty($email) || empty($password)) {
             return "Debes rellenar todos los campos.";
@@ -105,44 +106,25 @@ class UserController
             return "La contraseña debe tener al menos 6 caracteres.";
         }
 
-        // Subida de imagen (path)
-        $imgPath = "";
-        if (!empty($_FILES["avatar"]["name"])) {
-            $allowed   = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-            $uploadDir = "uploads/avatars/";
-
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
+        if ($rol === "admin") {
+            $codigo = trim($_POST["codigo_admin"] ?? "");
+            if ($codigo !== "12345adm") {
+                return "Código secreto incorrecto.";
             }
-
-            $mimeType = mime_content_type($_FILES["avatar"]["tmp_name"]);
-
-            if (!in_array($mimeType, $allowed)) {
-                return "Formato de imagen no permitido.";
-            }
-            if ($_FILES["avatar"]["size"] > 2 * 1024 * 1024) {
-                return "La imagen no puede superar 2MB.";
-            }
-            $mimeToExt = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif', 'image/webp' => 'webp'];
-            $ext       = $mimeToExt[$mimeType];
-            $filename  = uniqid("avatar_", true) . "." . $ext;
-            $imgPath  = $uploadDir . $filename;
-            move_uploaded_file($_FILES["avatar"]["tmp_name"], $imgPath);
         }
 
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         $stmt = $this->connection->prepare(
-            "INSERT INTO usuarios (name, email, password, path) VALUES (?, ?, ?, ?)"
+            "INSERT INTO usuarios (name, email, password, rol) VALUES (?, ?, ?, ?)"
         );
-        $stmt->bind_param("ssss", $name, $email, $passwordHash, $imgPath);
+        $stmt->bind_param("ssss", $name, $email, $passwordHash, $rol);
 
         if ($stmt->execute()) {
+            echo "Registro completado";
             return true;
         } else {
             return "Error al registrar usuario.";
         }
     }
 }
-
-
