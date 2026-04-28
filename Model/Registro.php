@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  
         <?php if ($error): ?>
             <div style="color:#ff3131; margin-bottom:15px; font-size:0.9rem; font-weight:bold;">
-                 <?= htmlspecialchars($error) ?>
+                ❌ <?= htmlspecialchars($error) ?>
             </div>
         <?php endif; ?>
  
