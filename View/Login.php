@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="login.css"> 
+    <link rel="stylesheet" href="Login.css"> 
 </head>
 <body>
     <div class="login-container">
         <h2>Login</h2>
 
-        <!-- FORMULARIO REAL QUE ENVÍA A PHP -->
-        <form class="login-form" method="POST" action="UserController.php">
+        <!-- FORMULARIO REAL QUE ENVÍA AL CONTROLADOR -->
+        <form class="login-form" method="POST" action="../../Controller/UserController/UserController.php">
 
             <div class="login-form-group">
                 <label class="login-label">Correo electrónico</label>
@@ -23,17 +23,14 @@
                 <input type="password" class="login-input" name="password" required>
             </div>
 
-            <!-- BOTÓN LOGIN REAL -->
             <button type="submit" name="Login" class="login-submit-btn">
                 Iniciar Sesión
             </button>
 
-            <!-- BOTÓN REGISTRO REAL -->
             <button type="submit" name="Register" class="login-submit-btn">
                 ¡Regístrate aquí!
             </button>
 
-            <!-- OPCIONAL: enlace a recuperar contraseña -->
             <a href="Registro.html" class="login-forgot">
                 ¿Has olvidado la contraseña?
             </a>
