@@ -8,8 +8,8 @@ class UserController
     {
         $this->connection = new mysqli(
             "localhost",
-            "adm1",
-            "12345",
+            "root",
+            "",
             "race_and_meet"
         );
 
@@ -50,7 +50,6 @@ class UserController
         $_SESSION["usuario_name"]  = $usuario["name"];
         $_SESSION["usuario_rol"]   = $usuario["rol"];
         $_SESSION["logged"]        = true;
-
         return true;
     }
 
@@ -128,9 +127,11 @@ class UserController
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         $stmt = $this->connection->prepare(
-            "INSERT INTO usuarios (name, email, password, rol, path) VALUES (?, ?, ?, ?, ?)"
+            // "INSERT INTO usuarios (name, email, password, rol, path) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO usuarios (name, email, password, rol) VALUES (?, ?, ?, ?)"
         );
-        $stmt->bind_param("sssss", $name, $email, $passwordHash, $rol, $imgPath);
+        // $stmt->bind_param("sssss", $name, $email, $passwordHash, $rol, $imgPath);
+        $stmt->bind_param("ssss", $name, $email, $passwordHash, $rol);
 
         if ($stmt->execute()) {
             $_SESSION["usuario_id"]    = $this->connection->insert_id;
