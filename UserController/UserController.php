@@ -1,40 +1,15 @@
 <?php
-session_start();
-//Validar forms
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $user = new UserController();
 
-    if (isset($_POST["Login"])) {
-        echo "<p> Login button is clicked.</p>";
-        $user->login();
-        $result = $user->login();
-         if ($result === true) {
-             header("Location: profile.php");
-             exit;
-         } else {
-             $error = $result; // Muestra el mensaje de error en el HTML
-         }
-    }
-    if (isset($_POST["Logout"])) {
-        echo "<p> Logout button is clicked.</p>";
-        $user->logout();
-    }
-    if (isset($_POST["Register"])) {
-        echo "<p> register button is clicked.</p>";
-        $user->register();
-    }
-}
 class UserController
 {
-
     private $connection;
 
     public function __construct()
     {
         $this->connection = new mysqli(
             "localhost",
-            "adm1",
-            "12345",
+            "root",
+            "",
             "race_and_meet"
         );
 
@@ -46,49 +21,49 @@ class UserController
     // Devuelve true si ok, o string con el error si falla
     public function login(): bool|string
     {
-        echo "en login";
+        $email    = trim($_POST["email"]    ?? "");
+        $password = trim($_POST["password"] ?? "");
 
-         $email    = trim($_POST["email"]    ?? "");
-         $password = trim($_POST["password"] ?? "");
+        if (empty($email) || empty($password)) {
+            return "Debes rellenar todos los campos.";
+        }
 
-         if (empty($email) || empty($password)) {
-             return "Debes rellenar todos los campos.";
-         }
+        $stmt = $this->connection->prepare(
+            "SELECT id, name, email, password, rol FROM usuarios WHERE email = ?"
+        );
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
 
-         $stmt = $this->connection->prepare(
-             "SELECT id, email, password FROM usuarios WHERE email = ?"
-         );
-         $stmt->bind_param("s", $email);
-         $stmt->execute();
-         $resultado = $stmt->get_result();
+        if ($resultado->num_rows === 0) {
+            return "El usuario no existe.";
+        }
 
-         if ($resultado->num_rows === 0) {
-             return "El usuario no existe.";
-         }
+        $usuario = $resultado->fetch_assoc();
 
-         $usuario = $resultado->fetch_assoc();
+        if (!password_verify($password, $usuario["password"])) {
+            return "Contraseña incorrecta.";
+        }
 
-         if (!password_verify($password, $usuario["password"])) {
-             return "Contraseña incorrecta.";
-         }
-
-         $_SESSION["usuario_id"]    = $usuario["id"];
-         $_SESSION["usuario_email"] = $usuario["email"];
-
+        $_SESSION["usuario_id"]    = $usuario["id"];
+        $_SESSION["usuario_email"] = $usuario["email"];
+        $_SESSION["usuario_name"]  = $usuario["name"];
+        $_SESSION["usuario_rol"]   = $usuario["rol"];
+        $_SESSION["logged"]        = true;
         return true;
     }
 
     public function logout(): void
     {
+        session_unset();
         session_destroy();
-        header("Location: index.php");
+        header("Location: Login.php");
         exit;
     }
 
     // Devuelve true si ok, o string con el error si falla
     public function register(): bool|string
     {
-
         $name     = trim($_POST["name"]     ?? "");
         $email    = trim($_POST["email"]    ?? "");
         $password = trim($_POST["password"] ?? "");
@@ -106,6 +81,16 @@ class UserController
             return "La contraseña debe tener al menos 6 caracteres.";
         }
 
+        // Comprobar que el email no esté ya registrado
+        $check = $this->connection->prepare(
+            "SELECT id FROM usuarios WHERE email = ?"
+        );
+        $check->bind_param("s", $email);
+        $check->execute();
+        if ($check->get_result()->num_rows > 0) {
+            return "Este email ya está registrado.";
+        }
+
         if ($rol === "admin") {
             $codigo = trim($_POST["codigo_admin"] ?? "");
             if ($codigo !== "12345adm") {
@@ -113,18 +98,50 @@ class UserController
             }
         }
 
+        // Gestión de avatar 
+        $imgPath = "";
+        if (!empty($_FILES["avatar"]["name"])) {
+            $allowed   = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+            $uploadDir = "../uploads/avatars/";
+
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            $mimeType = mime_content_type($_FILES["avatar"]["tmp_name"]);
+
+            if (!in_array($mimeType, $allowed)) {
+                return "Formato de imagen no permitido (jpg, png, gif, webp).";
+            }
+
+            if ($_FILES["avatar"]["size"] > 2 * 1024 * 1024) {
+                return "La imagen supera el tamaño máximo de 2 MB.";
+            }
+
+            $ext      = pathinfo($_FILES["avatar"]["name"], PATHINFO_EXTENSION);
+            $filename = uniqid("avatar_", true) . "." . $ext;
+            $imgPath  = $uploadDir . $filename;
+            move_uploaded_file($_FILES["avatar"]["tmp_name"], $imgPath);
+        }
+
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         $stmt = $this->connection->prepare(
+            // "INSERT INTO usuarios (name, email, password, rol, path) VALUES (?, ?, ?, ?, ?)"
             "INSERT INTO usuarios (name, email, password, rol) VALUES (?, ?, ?, ?)"
         );
+        // $stmt->bind_param("sssss", $name, $email, $passwordHash, $rol, $imgPath);
         $stmt->bind_param("ssss", $name, $email, $passwordHash, $rol);
 
         if ($stmt->execute()) {
-            echo "Registro completado";
+            $_SESSION["usuario_id"]    = $this->connection->insert_id;
+            $_SESSION["usuario_email"] = $email;
+            $_SESSION["usuario_name"]  = $name;
+            $_SESSION["usuario_rol"]   = $rol;
+            $_SESSION["logged"]        = true;
             return true;
-        } else {
-            return "Error al registrar usuario.";
         }
+
+        return "Error al registrar usuario.";
     }
 }
