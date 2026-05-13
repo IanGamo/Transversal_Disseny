@@ -1,16 +1,15 @@
 <?php
 session_start();
 
-// Si no hay sesión activa → redirige al login
 if (empty($_SESSION['logged'])) {
     header('Location: Login.php');
     exit;
 }
 
-$userName  = htmlspecialchars($_SESSION['usuario_name']  ?? '');
-$userEmail = htmlspecialchars($_SESSION['usuario_email'] ?? '');
-$userRol   = htmlspecialchars($_SESSION['usuario_rol']   ?? '');
-$userAvatar = $_SESSION['usuario_avatar'] ?? '';
+$userName   = htmlspecialchars($_SESSION['usuario_name']  ?? '');
+$userEmail  = htmlspecialchars($_SESSION['usuario_email'] ?? '');
+$userRol    = htmlspecialchars($_SESSION['usuario_rol']   ?? '');
+$userPath   = $_SESSION['usuario_path'] ?? ''; 
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -23,11 +22,11 @@ $userAvatar = $_SESSION['usuario_avatar'] ?? '';
 <body>
     <div class="profile-container">
 
-        <?php if ($userAvatar && file_exists($userAvatar)): ?>
-            <img src="<?= htmlspecialchars($userAvatar) ?>"
+        <?php if ($userPath && file_exists($userPath)): ?>
+            <img src="<?= htmlspecialchars($userPath) ?>"
                  alt="Avatar" class="profile-avatar">
         <?php else: ?>
-            <div class="profile-avatar-placeholder"></div>
+            <div class="profile-avatar-placeholder">👤</div>
         <?php endif; ?>
 
         <div class="profile-name"><?= $userName ?></div>
