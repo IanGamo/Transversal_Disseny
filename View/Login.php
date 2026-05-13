@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['Login'])) {
         $result = $ctrl->login();
         if ($result === true) {
-            header('Location: Home.html');
+            header('Location: Home.php');
             exit;
         }
         $error = $result;
@@ -39,13 +39,12 @@ $userName   = htmlspecialchars($_SESSION['usuario_name'] ?? '');
 
         <?php if ($loggedIn): ?>
 
-
             <h2>Bienvenido, <?= $userName ?> </h2>
             <p style="text-align:center; color:#555; margin-bottom:20px;">
                 Ya tienes una sesión iniciada.
             </p>
 
-            <a href="Home.html" style="display:block; text-align:center; margin-bottom:12px;
+            <a href="Home.php" style="display:block; text-align:center; margin-bottom:12px;
                color:#ff3131; font-weight:bold; text-decoration:none;">
                 Ir al inicio →
             </a>
@@ -56,13 +55,12 @@ $userName   = htmlspecialchars($_SESSION['usuario_name'] ?? '');
 
         <?php else: ?>
 
-
             <h2>Login</h2>
 
             <?php if ($error): ?>
                 <div style="color:#ff3131; margin-bottom:15px;
                             font-size:0.9rem; font-weight:bold;">
-                    <?= htmlspecialchars($error) ?>
+                     <?= htmlspecialchars($error) ?>
                 </div>
             <?php endif; ?>
 

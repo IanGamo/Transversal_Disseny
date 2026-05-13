@@ -1,3 +1,9 @@
+<?php
+session_start();
+$loggedIn = !empty($_SESSION['logged']);
+$userName = htmlspecialchars($_SESSION['usuario_name'] ?? '');
+$userRol  = $_SESSION['usuario_rol'] ?? '';
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,13 +18,26 @@
 
     <nav class="navbar">
         <ul class="nav-links">
-            <li><a href="Home.html">Inicio</a></li>
+            <li><a href="Home.php">Inicio</a></li>
             <li><a href="Eventos.html">Eventos</a></li>
             <li><a href="Comunidad.html">Comunidad</a></li>
         </ul>
+
         <div class="nav-actions">
-            <a href="Login.php"><button class="btn-login">Iniciar sesión</button></a>
-            <a href="Registro_user.php"><button class="btn-register">Registro</button></a>
+            <?php if ($loggedIn): ?>
+                <a href="profile.php" style="color:#ff3131; font-weight:bold;
+                   text-decoration:none; margin-right:12px;">
+                    Hola, <?= $userName ?> 👤
+                </a>
+                <form method="POST" action="Login.php" style="display:inline;">
+                    <button type="submit" name="Logout" class="btn-login">
+                        Cerrar sesión
+                    </button>
+                </form>
+            <?php else: ?>
+                <a href="Login.php"><button class="btn-login">Iniciar sesión</button></a>
+                <a href="Registro_user.php"><button class="btn-register">Registro</button></a>
+            <?php endif; ?>
         </div>
     </nav>
 </header>
