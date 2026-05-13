@@ -8,8 +8,8 @@ class UserController
     {
         $this->connection = new mysqli(
             "localhost",
-            "root",
-            "",
+            "adm1",
+            "12345",
             "race_and_meet"
         );
 
@@ -18,7 +18,6 @@ class UserController
         }
     }
 
-    // Devuelve true si ok, o string con el error si falla
     public function login(): bool|string
     {
         $email    = trim($_POST["email"]    ?? "");
@@ -28,8 +27,9 @@ class UserController
             return "Debes rellenar todos los campos.";
         }
 
+        // Ahora también selecciona 'path' para el avatar
         $stmt = $this->connection->prepare(
-            "SELECT id, name, email, password, rol FROM usuarios WHERE email = ?"
+            "SELECT id, name, email, password, rol, path FROM usuarios WHERE email = ?"
         );
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -49,7 +49,9 @@ class UserController
         $_SESSION["usuario_email"] = $usuario["email"];
         $_SESSION["usuario_name"]  = $usuario["name"];
         $_SESSION["usuario_rol"]   = $usuario["rol"];
+        $_SESSION["usuario_path"]  = $usuario["path"]; // avatar guardado en sesión
         $_SESSION["logged"]        = true;
+
         return true;
     }
 
@@ -61,7 +63,6 @@ class UserController
         exit;
     }
 
-    // Devuelve true si ok, o string con el error si falla
     public function register(): bool|string
     {
         $name     = trim($_POST["name"]     ?? "");
@@ -81,7 +82,6 @@ class UserController
             return "La contraseña debe tener al menos 6 caracteres.";
         }
 
-        // Comprobar que el email no esté ya registrado
         $check = $this->connection->prepare(
             "SELECT id FROM usuarios WHERE email = ?"
         );
@@ -98,7 +98,7 @@ class UserController
             }
         }
 
-        // Gestión de avatar 
+        // Gestión de avatar
         $imgPath = "";
         if (!empty($_FILES["avatar"]["name"])) {
             $allowed   = ["image/jpeg", "image/png", "image/gif", "image/webp"];
@@ -127,17 +127,16 @@ class UserController
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         $stmt = $this->connection->prepare(
-            // "INSERT INTO usuarios (name, email, password, rol, path) VALUES (?, ?, ?, ?, ?)"
-            "INSERT INTO usuarios (name, email, password, rol) VALUES (?, ?, ?, ?)"
+            "INSERT INTO usuarios (name, email, password, rol, path) VALUES (?, ?, ?, ?, ?)"
         );
-        // $stmt->bind_param("sssss", $name, $email, $passwordHash, $rol, $imgPath);
-        $stmt->bind_param("ssss", $name, $email, $passwordHash, $rol);
+        $stmt->bind_param("sssss", $name, $email, $passwordHash, $rol, $imgPath);
 
         if ($stmt->execute()) {
             $_SESSION["usuario_id"]    = $this->connection->insert_id;
             $_SESSION["usuario_email"] = $email;
             $_SESSION["usuario_name"]  = $name;
             $_SESSION["usuario_rol"]   = $rol;
+            $_SESSION["usuario_path"]  = $imgPath; // avatar guardado en sesión
             $_SESSION["logged"]        = true;
             return true;
         }
