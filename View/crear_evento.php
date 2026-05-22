@@ -44,13 +44,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <form action="" method="POST" enctype="multipart/form-data">
 
         <label for="titulo">Título del evento</label>
-        <input type="text" id="titulo" name="titulo" placeholder="Ej: Drift Barcelona 2026" required>
+        <input type="text" id="titulo" name="titulo" placeholder="Ejemplo: Rayo McQueen en VIVO" required>
 
         <label for="fecha">Fecha</label>
         <input type="date" id="fecha" name="fecha" required>
 
         <label for="ubicacion">Ubicación</label>
-        <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: Circuit de Catalunya" required>
+        <input type="text" id="ubicacion" name="ubicacion" placeholder="Ejemplo: Plaza Catalunya" required>
 
         <label for="descripcion">Descripción</label>
         <textarea id="descripcion" name="descripcion" placeholder="Describe el evento..." required></textarea>

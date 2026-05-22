@@ -72,7 +72,7 @@ $userRol  = $_SESSION['usuario_rol'] ?? '';
                 Tenemos gran variedad de eventos tanto oficiales como creados por nuestra
                 propia comunidad, atento que el próximo puede estar cerca de ti.
             </p>
-            <a href="Eventos.html">
+            <a href="Eventos.php">
                 <button type="button" class="info-btn">Más Info</button>
             </a>
         </div>

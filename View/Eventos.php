@@ -1,9 +1,13 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Eventos</title>
-    <link rel="stylesheet" href="../src/css/Eventos.css">
+    <link rel="stylesheet" href="../src/css/Eventos.css?v=2">
 </head>
 <body>
 
@@ -37,7 +41,7 @@
         <a href="Carrito_evento3.html" class="evento">
             <div class="evento-info">
                 <p>Festival de velocidad y demostraciones en pista</p>
-                <span>€80</span>
+                <span>€35</span>
             </div>
             <div class="evento-foto">
                 <img src="../src/images/imagen2.png" alt="Folleto del evento">
@@ -55,6 +59,19 @@
         </a>
 
     </main>
+
+    <!-- BOTONES FLOTANTES DEL CRUD -->
+    <div class="fab-container">
+        <a href="listar_eventos.php" class="fab-btn fab-ver">
+            Ver eventos
+        </a>
+
+        <?php if (isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] === "admin"): ?>
+            <a href="crear_evento.php" class="fab-btn fab-crear">
+                Crear evento
+            </a>
+        <?php endif; ?>
+    </div>
 
     <footer class="container">
         <a href="Home.php">
