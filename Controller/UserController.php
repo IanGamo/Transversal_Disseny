@@ -2,22 +2,23 @@
 
 class UserController
 {
-    private $connection;
+    private PDO $connection;
 
     public function __construct()
     {
-        $this->connection = new mysqli(
-            "localhost",
-            "adm1",
-            "12345",
-            "race_and_meet"
-        );
-
-        if ($this->connection->connect_error) {
-            die("Error de conexión: " . $this->connection->connect_error);
+        try {
+            $this->connection = new PDO(
+                "mysql:host=localhost;dbname=race_and_meet;charset=utf8",
+                "adm1",
+                "12345"
+            );
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("Error de conexión: " . $e->getMessage());
         }
     }
 
+    // LOGIN
     public function login(): bool|string
     {
         $email    = trim($_POST["email"]    ?? "");
@@ -27,19 +28,17 @@ class UserController
             return "Debes rellenar todos los campos.";
         }
 
-        // Ahora también selecciona 'path' para el avatar
         $stmt = $this->connection->prepare(
-            "SELECT id, name, email, password, rol, path FROM usuarios WHERE email = ?"
+            "SELECT id, name, email, password, rol, path 
+             FROM usuarios 
+             WHERE email = ?"
         );
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $resultado = $stmt->get_result();
+        $stmt->execute([$email]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($resultado->num_rows === 0) {
+        if (!$usuario) {
             return "El usuario no existe.";
         }
-
-        $usuario = $resultado->fetch_assoc();
 
         if (!password_verify($password, $usuario["password"])) {
             return "Contraseña incorrecta.";
@@ -49,12 +48,13 @@ class UserController
         $_SESSION["usuario_email"] = $usuario["email"];
         $_SESSION["usuario_name"]  = $usuario["name"];
         $_SESSION["usuario_rol"]   = $usuario["rol"];
-        $_SESSION["usuario_path"]  = $usuario["path"]; // avatar guardado en sesión
+        $_SESSION["usuario_path"]  = $usuario["path"];
         $_SESSION["logged"]        = true;
 
         return true;
     }
 
+    // LOGOUT
     public function logout(): void
     {
         session_unset();
@@ -63,6 +63,7 @@ class UserController
         exit;
     }
 
+    // REGISTER
     public function register(): bool|string
     {
         $name     = trim($_POST["name"]     ?? "");
@@ -82,15 +83,15 @@ class UserController
             return "La contraseña debe tener al menos 6 caracteres.";
         }
 
-        $check = $this->connection->prepare(
-            "SELECT id FROM usuarios WHERE email = ?"
-        );
-        $check->bind_param("s", $email);
-        $check->execute();
-        if ($check->get_result()->num_rows > 0) {
+        // Comprobar si el email ya existe
+        $stmt = $this->connection->prepare("SELECT id FROM usuarios WHERE email = ?");
+        $stmt->execute([$email]);
+
+        if ($stmt->fetch()) {
             return "Este email ya está registrado.";
         }
 
+        // Validación de admin
         if ($rol === "admin") {
             $codigo = trim($_POST["codigo_admin"] ?? "");
             if ($codigo !== "12345adm") {
@@ -98,9 +99,10 @@ class UserController
             }
         }
 
-        // Gestión de avatar
+        // AVATAR
         $imgPath = "";
         if (!empty($_FILES["avatar"]["name"])) {
+
             $allowed   = ["image/jpeg", "image/png", "image/gif", "image/webp"];
             $uploadDir = "../uploads/avatars/";
 
@@ -109,34 +111,37 @@ class UserController
             }
 
             $mimeType = mime_content_type($_FILES["avatar"]["tmp_name"]);
-
             if (!in_array($mimeType, $allowed)) {
                 return "Formato de imagen no permitido (jpg, png, gif, webp).";
             }
 
             if ($_FILES["avatar"]["size"] > 2 * 1024 * 1024) {
-                return "La imagen supera el tamaño máximo de 2 MB.";
+                return "La imagen supera los 2 MB.";
             }
 
             $ext      = pathinfo($_FILES["avatar"]["name"], PATHINFO_EXTENSION);
             $filename = uniqid("avatar_", true) . "." . $ext;
             $imgPath  = $uploadDir . $filename;
+
             move_uploaded_file($_FILES["avatar"]["tmp_name"], $imgPath);
         }
 
+        // INSERTAR USUARIO
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         $stmt = $this->connection->prepare(
-            "INSERT INTO usuarios (name, email, password, rol, path) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO usuarios (name, email, password, rol, path)
+             VALUES (?, ?, ?, ?, ?)"
         );
-        $stmt->bind_param("sssss", $name, $email, $passwordHash, $rol, $imgPath);
 
-        if ($stmt->execute()) {
-            $_SESSION["usuario_id"]    = $this->connection->insert_id;
+        $ok = $stmt->execute([$name, $email, $passwordHash, $rol, $imgPath]);
+
+        if ($ok) {
+            $_SESSION["usuario_id"]    = $this->connection->lastInsertId();
             $_SESSION["usuario_email"] = $email;
             $_SESSION["usuario_name"]  = $name;
             $_SESSION["usuario_rol"]   = $rol;
-            $_SESSION["usuario_path"]  = $imgPath; // avatar guardado en sesión
+            $_SESSION["usuario_path"]  = $imgPath;
             $_SESSION["logged"]        = true;
             return true;
         }
