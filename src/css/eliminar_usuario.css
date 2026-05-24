@@ -1,0 +1,300 @@
+/* =========================================
+   eliminar_usuario.css — Race&Meet Admin
+   Paleta: #0d0d0d / #1a1a1a / #ff3131
+   ========================================= */
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #0d0d0d;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e0e0e0;
+    min-height: 100vh;
+    padding: 32px 20px 60px;
+}
+
+/* ── Wrapper ── */
+.admin-wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+/* ── Cabecera ── */
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.admin-header__left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.admin-badge {
+    background: #ff3131;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.admin-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* ── Botones ── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn--ghost {
+    background: #1e1e1e;
+    color: #cccccc;
+    border: 1px solid #2e2e2e;
+}
+.btn--ghost:hover { background: #2a2a2a; color: #ffffff; }
+
+.btn--danger {
+    background: #ff3131;
+    color: #ffffff;
+}
+.btn--danger:hover { background: #cc0000; }
+
+/* ── Alertas ── */
+.alert {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 22px;
+    border-left: 4px solid transparent;
+}
+
+.alert--success {
+    background: #0f2e1a;
+    color: #4ade80;
+    border-left-color: #4ade80;
+}
+
+.alert--error {
+    background: #2e0f0f;
+    color: #ff6b6b;
+    border-left-color: #ff3131;
+}
+
+/* ── Contador ── */
+.user-count {
+    font-size: 0.88rem;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.user-count__number {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ff3131;
+    margin-right: 6px;
+}
+
+/* ── Estado vacío ── */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #555;
+}
+
+.empty-state__icon {
+    font-size: 3.5rem;
+    margin-bottom: 14px;
+}
+
+.empty-state p {
+    font-size: 1rem;
+}
+
+/* ── Grid de usuarios ── */
+.user-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ── Tarjeta de usuario ── */
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: #1a1a1a;
+    border: 1px solid #242424;
+    border-radius: 12px;
+    padding: 16px 20px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.user-card:hover {
+    border-color: #3a3a3a;
+    box-shadow: 0 4px 20px rgba(255, 49, 49, 0.08);
+}
+
+/* Avatar */
+.user-card__avatar {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #ff3131;
+}
+
+.user-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #2a2a2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #ff3131;
+}
+
+/* Info */
+.user-card__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-card__name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-card__email {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-card__date {
+    font-size: 0.78rem;
+    color: #555;
+    margin-top: 4px;
+}
+
+/* Acciones */
+.user-card__actions {
+    flex-shrink: 0;
+}
+
+/* ── Modal de confirmación ── */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
+    border-radius: 16px;
+    padding: 36px 32px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    animation: modalIn 0.2s ease;
+}
+
+@keyframes modalIn {
+    from { transform: scale(0.92) translateY(10px); opacity: 0; }
+    to   { transform: scale(1)    translateY(0);    opacity: 1; }
+}
+
+.modal__icon {
+    font-size: 2.8rem;
+    margin-bottom: 14px;
+}
+
+.modal__title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 14px;
+}
+
+.modal__body {
+    font-size: 0.9rem;
+    color: #999;
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+.modal__body strong {
+    color: #ffffff;
+}
+
+.modal__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.modal__actions form { display: contents; }
+
+/* ── Responsive ── */
+@media (max-width: 560px) {
+    .admin-title   { font-size: 1.2rem; }
+    .user-card     { flex-wrap: wrap; }
+    .user-card__actions { width: 100%; }
+    .user-card__actions .btn { width: 100%; justify-content: center; }
+}

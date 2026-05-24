@@ -48,7 +48,7 @@ $(document).ready(function () {
         ]
     });
 
-    // ── SLIDER 2: EQUIPO ─────────────────────────────────────────
+    // ── SLIDER 2: EQUIPO 
     $('.slider-equipo').slick({
         dots: true,
         infinite: true,

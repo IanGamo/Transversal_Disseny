@@ -63,6 +63,112 @@ class UserController
         exit;
     }
 
+    // ELIMINAR CUENTA PROPIA
+    public function deleteOwnAccount(): bool|string
+    {
+        if (empty($_SESSION['logged'])) {
+            return "No hay sesión activa.";
+        }
+
+        $id = (int) ($_SESSION['usuario_id'] ?? 0);
+
+        if ($id <= 0) {
+            return "ID de usuario no válido.";
+        }
+
+        // Obtener avatar antes de borrar
+        $stmt = $this->connection->prepare(
+            "SELECT path FROM usuarios WHERE id = ?"
+        );
+        $stmt->execute([$id]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user) {
+            return "El usuario no existe.";
+        }
+
+        // Eliminar avatar del servidor si existe
+        if (!empty($user['path']) && file_exists($user['path'])) {
+            unlink($user['path']);
+        }
+
+        // Borrar de la BD
+        $stmt = $this->connection->prepare(
+            "DELETE FROM usuarios WHERE id = ?"
+        );
+        $ok = $stmt->execute([$id]);
+
+        if ($ok) {
+            // Destruir sesión
+            session_unset();
+            session_destroy();
+            return true;
+        }
+
+        return "Error al eliminar la cuenta.";
+    }
+
+    // LISTAR USUARIOS ESTÁNDAR
+    public function listStandardUsers(): array
+    {
+        $stmt = $this->connection->prepare(
+            "SELECT id, name, email, path, created_at
+             FROM usuarios
+             WHERE rol = 'usuario'
+             ORDER BY name ASC"
+        );
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ELIMINAR USUARIO ESTÁNDAR
+    public function deleteUser(): bool|string
+    {
+        // Solo admins pueden eliminar
+        if (($_SESSION['usuario_rol'] ?? '') !== 'admin') {
+            return "Acceso denegado: no tienes permisos de administrador.";
+        }
+
+        $id = (int) ($_POST['user_id'] ?? 0);
+
+        if ($id <= 0) {
+            return "ID de usuario no válido.";
+        }
+
+        // Evitar que el admin se elimine a sí mismo
+        if ($id === (int) ($_SESSION['usuario_id'] ?? 0)) {
+            return "No puedes eliminar tu propia cuenta.";
+        }
+
+        // Obtener datos del usuario antes de borrarlo
+        $stmt = $this->connection->prepare(
+            "SELECT rol, path FROM usuarios WHERE id = ?"
+        );
+        $stmt->execute([$id]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user) {
+            return "El usuario no existe.";
+        }
+
+        if ($user['rol'] !== 'usuario') {
+            return "Solo se pueden eliminar usuarios estándar.";
+        }
+
+        // Eliminar el avatar del servidor si existe
+        if (!empty($user['path']) && file_exists($user['path'])) {
+            unlink($user['path']);
+        }
+
+        // Eliminar de la BD
+        $stmt = $this->connection->prepare(
+            "DELETE FROM usuarios WHERE id = ? AND rol = 'usuario'"
+        );
+        $ok = $stmt->execute([$id]);
+
+        return $ok ? true : "Error al eliminar el usuario.";
+    }
+
     // REGISTER
     public function register(): bool|string
     {
