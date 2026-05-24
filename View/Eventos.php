@@ -1,13 +1,14 @@
 <?php
 session_start();
+$loggedIn = !empty($_SESSION['logged']);
+$userName = htmlspecialchars($_SESSION['usuario_name'] ?? '');
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Eventos</title>
-    <link rel="stylesheet" href="../src/css/Eventos.css?v=2">
+    <title>Eventos | Race&Meet</title>
+    <link rel="stylesheet" href="../src/css/Eventos.css">
 </head>
 <body>
 
@@ -25,6 +26,10 @@ session_start();
             </div>
             <div class="evento-foto">
                 <img src="../src/images/eurocrewmotorland26.jpg" alt="Folleto del evento">
+                <div class="evento-hover-info">
+                    Salón de Innovación
+                    <span>Haz clic para comprar tu entrada · €45</span>
+                </div>
             </div>
         </a>
 
@@ -35,16 +40,24 @@ session_start();
             </div>
             <div class="evento-foto">
                 <img src="../src/images/imagen1.png" alt="Folleto del evento">
+                <div class="evento-hover-info">
+                    Exhibición Internacional
+                    <span>Haz clic para comprar tu entrada · €35</span>
+                </div>
             </div>
         </a>
 
         <a href="Carrito_evento3.html" class="evento">
             <div class="evento-info">
                 <p>Festival de velocidad y demostraciones en pista</p>
-                <span>€35</span>
+                <span>€80</span>
             </div>
             <div class="evento-foto">
                 <img src="../src/images/imagen2.png" alt="Folleto del evento">
+                <div class="evento-hover-info">
+                    Festival de Velocidad
+                    <span>Haz clic para comprar tu entrada · €80</span>
+                </div>
             </div>
         </a>
 
@@ -55,29 +68,23 @@ session_start();
             </div>
             <div class="evento-foto">
                 <img src="../src/images/imagen3.png" alt="Folleto del evento">
+                <div class="evento-hover-info">
+                    Competencia de Diseño
+                    <span>Haz clic para comprar tu entrada · €120</span>
+                </div>
             </div>
         </a>
 
     </main>
-
-    <!-- BOTONES FLOTANTES DEL CRUD -->
-    <div class="fab-container">
-        <a href="listar_eventos.php" class="fab-btn fab-ver">
-            Ver eventos
-        </a>
-
-        <?php if (isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] === "admin"): ?>
-            <a href="crear_evento.php" class="fab-btn fab-crear">
-                Crear evento
-            </a>
-        <?php endif; ?>
-    </div>
 
     <footer class="container">
         <a href="Home.php">
             <button class="volver-btn">Volver a HOME</button>
         </a>
     </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="../src/js/eventos.js"></script>
 
 </body>
 </html>
