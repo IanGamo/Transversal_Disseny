@@ -10,6 +10,7 @@
 - **Eventos** — Listado de eventos de coches y motos disponibles.
 - **Carrito** — Gestión de entradas seleccionadas para los eventos.
 - **Comunidad** — Espacio para conectar con otros usuarios aficionados al motor.
+- **Perfil** — Página personal del usuario con sus datos y opciones de cuenta.
 
 ---
 
@@ -17,16 +18,30 @@
 
 La web dispone de un sistema completo de registro y login:
 
-- **Registro de usuario** — Formulario para crear una cuenta estándar.
+- **Registro de usuario** — Formulario para crear una cuenta estándar con avatar opcional.
 - **Registro de administrador** — Formulario con código secreto para cuentas con permisos de administración.
 - **Login** — Acceso con email y contraseña.
 - **Logout** — Cierre de sesión con redirección automática al login.
 
 ---
 
+## Gestión de usuarios
+
+### Usuario estándar
+- Puede ver y editar su perfil.
+- Puede **darse de baja** desde su perfil: elimina su cuenta y avatar del servidor de forma permanente, previa confirmación mediante modal.
+
+### Administrador
+- Accede al panel **Gestionar usuarios** desde su perfil.
+- Puede ver el listado completo de usuarios estándar registrados (nombre, email, avatar y fecha de registro).
+- Puede **eliminar cualquier usuario estándar**, incluyendo su avatar del servidor, previa confirmación mediante modal.
+- No puede eliminarse a sí mismo ni eliminar otros administradores.
+
+---
+
 ## Tecnologías
 
-- **Frontend:** HTML, CSS
+- **Frontend:** HTML, CSS, JavaScript
 - **Backend:** PHP
 - **Base de datos:** MySQL
 - **Arquitectura:** MVC (Model - View - Controller)
@@ -37,23 +52,27 @@ La web dispone de un sistema completo de registro y login:
 
 ```
 Responsive/
-├── BDD/
-│   └── bdd.php               # Conexión a la base de datos
 ├── Controller/
-├── Model/
-│   ├── Login.php
-│   └── Registro.php
-├── UserController/
-│   ├── UserController.php    # Lógica de login, registro y logout
-│   ├── Login.html
-│   ├── Registro_usuario.html
-│   ├── Registro_admin.html
-│   └── Logout.php
+│   ├── UserController.php      # Login, registro, logout, eliminar cuenta propia, eliminar usuario (admin)
+│   └── EventController.php     # Lógica de eventos
 └── View/
-    ├── Home.html
-    ├── Eventos.html
-    ├── Carrito.html
-    └── Comunidad.html
+    ├── Login.php
+    ├── Registro_user.php
+    ├── registro_adm.php
+    ├── Profile.php              # Perfil de usuario + opción darse de baja
+    ├── eliminar_usuario.php     # Panel admin: listado y eliminación de usuarios estándar
+    ├── ver_evento.php
+    └── src/
+        ├── css/
+        │   ├── Profile.css
+        │   ├── eliminar_usuario.css
+        │   ├── Login.css
+        │   ├── Registro.css
+        │   ├── Eventos.css
+        │   ├── Home.css
+        │   └── ...
+        ├── js/
+        └── images/
 ```
 
 ---
@@ -62,7 +81,29 @@ Responsive/
 
 - **Host:** localhost
 - **Base de datos:** `race_and_meet`
-- **Tabla principal:** `usuarios` (id, name, email, password, rol)
+- **Usuario:** `adm1`
+- **Tabla principal:** `usuarios`
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| id | INT | Clave primaria autoincremental |
+| name | VARCHAR | Nombre del usuario |
+| email | VARCHAR | Email único |
+| password | VARCHAR | Contraseña hasheada (bcrypt) |
+| rol | ENUM | `usuario` o `admin` |
+| path | VARCHAR | Ruta del avatar en el servidor |
+| created_at | DATETIME | Fecha de registro |
+
+---
+
+## Roles y permisos
+
+| Acción | Usuario | Admin |
+|---|---|---|
+| Ver perfil propio | ✅ | ✅ |
+| Darse de baja | ✅ | ✅ |
+| Ver listado de usuarios | ✅ | ✅ |
+| Eliminar usuarios estándar | ✅ | ✅ |
 
 ---
 
@@ -70,4 +111,6 @@ Responsive/
 
 1. Clona o descarga el proyecto en tu servidor local (XAMPP, WAMP, etc.).
 2. Importa la base de datos `race_and_meet` en MySQL.
-3. Accede desde el navegador a `localhost/Diseño/Responsive/UserController/Login.html`.
+3. Accede desde el navegador a `localhost/Responsive/View/Login.php`.
+
+> Para crear un administrador, accede a `registro_adm.php` e introduce el código secreto durante el registro.
